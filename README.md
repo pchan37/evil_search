@@ -1,2 +1,2 @@
-# emacs-evil-search
-Emacs search using Python regex and Vim syntax
+# evil_search
+Python library for searching with vim-like syntax and python regex.
