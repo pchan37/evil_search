@@ -130,7 +130,7 @@
   "Perform evil-search or evil-substitute based on user input or optional arg, INPUT."
   (interactive)
   (let* ((input (or input (read-string "")))
-         (py-command-output (evil-search-run-python-command (buffer-string) input (point)))
+         (py-command-output (evil-search-run-python-command (buffer-string) input (1- (point))))
          (relevant-data (get-relevant-data-from-python-command-result py-command-output))
          (search-replace-result (car relevant-data))
          (regex-flags (car (cdr relevant-data))))
