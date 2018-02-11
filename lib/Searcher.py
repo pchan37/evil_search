@@ -1,4 +1,4 @@
-import utils
+from utils import utils
 
 
 class Searcher(object):
@@ -8,26 +8,26 @@ class Searcher(object):
         self.regex_pattern = regex
 
     def search_once(self, start_index, end_index=float('inf')):
-        search_tuple = ()
+        search_list = []
 
         if start_index < 0:
-            return search_tuple
+            return search_list
 
         match = self.regex_pattern.search(self.input_string, start_index)
         if match is not None and match.start() < end_index:
-            search_tuple = (match.group(0), str(match.start()))
-        return search_tuple
+            search_list = (match.group(0), str(match.start()))
+        return search_list
 
     def search_all(self, start_index, end_index=float('inf')):
-        search_match_list = []
+        list_of_searches = []
 
-        search_match_tuple = self.search_once(start_index, end_index)
-        while search_match_tuple:
-            match_start = int(search_match_tuple)
-            if search_match_tuple in search_match_list or match_start >= end_index:
+        search_list = self.search_once(start_index, end_index)
+        while search_list:
+            match_start = int(search_list[1])
+            if search_list in list_of_searches or match_start >= end_index:
                 break
             else:
-                search_match_list.append(search_match_tuple)
+                list_of_searches.append(search_list)
             start_index = match_start + 1
-            search_match_tuple = self.search_once(start_index, end_index)
-        return utils.unpack_tuple_in_list(search_match_list)
+            search_list = self.search_once(start_index, end_index)
+        return utils.unpack_tuple_in_list(list_of_searches)
