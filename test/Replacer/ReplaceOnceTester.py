@@ -12,7 +12,7 @@ class ReplaceOnceTester(Tester.Tester):
         super(ReplaceOnceTester, self).__init__(ReplaceOnceTester)
 
     def test_standard_case_no_repeat(self):
-        r = Replacer.Replacer('hello', re.compile('he'), 'bye')
+        r = Replacer.Replacer('hello', re.compile('he', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(0)
         assert test_result1 == ['he', 'bye', '0'], (
@@ -23,7 +23,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result2))
 
     def test_standard_case_with_repeat(self):
-        r = Replacer.Replacer('hellohe', re.compile('he'), 'bye')
+        r = Replacer.Replacer('hellohe', re.compile('he', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(0)
         assert test_result1 == ['he', 'bye', '0'], (
@@ -42,56 +42,56 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result4))
 
     def test_start_index_too_small_no_match(self):
-        r = Replacer.Replacer('hellohe', re.compile('i'), 'bye')
+        r = Replacer.Replacer('hellohe', re.compile('i', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(-1)
         assert test_result1 == [], (
             'Expected: [], got: {}'.format(test_result1))
 
     def test_start_index_too_small_has_match_anywhere(self):
-        r = Replacer.Replacer('hllohe', re.compile('he'), 'bye')
+        r = Replacer.Replacer('hllohe', re.compile('he', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(-1)
         assert test_result1 == [], (
             'Expected: [], got: {}'.format(test_result1))
 
     def test_start_index_too_small_has_match_at_start(self):
-        r = Replacer.Replacer('iello', re.compile('i'), 'bye')
+        r = Replacer.Replacer('iello', re.compile('i', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(-1)
         assert test_result1 == [], (
             'Expected: [], got: {}'.format(test_result1))
 
     def test_start_index_too_small_has_match_at_end(self):
-        r = Replacer.Replacer('helloi', re.compile('i'), 'bye')
+        r = Replacer.Replacer('helloi', re.compile('i', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(-1)
         assert test_result1 == [], (
             'Expected: [], got: {}'.format(test_result1))
 
     def test_start_index_too_big_no_match(self):
-        r = Replacer.Replacer('helloi', re.compile('j'), 'bye')
+        r = Replacer.Replacer('helloi', re.compile('j', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(6)
         assert test_result1 == [], (
             'Expected: [], got: {}'.format(test_result1))
 
     def test_start_index_too_big_match_at_start(self):
-        r = Replacer.Replacer('hello', re.compile('he'), 'bye')
+        r = Replacer.Replacer('hello', re.compile('he', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(6)
         assert test_result1 == [], (
             'Expected: [], got: {}'.format(test_result1))
 
     def test_start_index_too_big_match_at_middle(self):
-        r = Replacer.Replacer('helloi', re.compile('i'), 'bye')
+        r = Replacer.Replacer('helloi', re.compile('i', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(6)
         assert test_result1 == [], (
             'Expected: [], got: {}'.format(test_result1))
 
     def test_end_index_too_small_no_match(self):
-        r = Replacer.Replacer('helloi', re.compile('j'), 'bye')
+        r = Replacer.Replacer('helloi', re.compile('j', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(0, -1)
         assert test_result1 == [], (
@@ -114,7 +114,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result5))
 
     def test_end_index_too_small_match_at_start(self):
-        r = Replacer.Replacer('helloi', re.compile('he'), 'bye')
+        r = Replacer.Replacer('helloi', re.compile('he', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(0, -1)
         assert test_result1 == [], (
@@ -137,7 +137,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result5))
 
     def test_end_index_too_small_match_at_middle(self):
-        r = Replacer.Replacer('helloi', re.compile('i'), 'bye')
+        r = Replacer.Replacer('helloi', re.compile('i', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(0, -1)
         assert test_result1 == [], (
@@ -161,7 +161,7 @@ class ReplaceOnceTester(Tester.Tester):
 
     # FIXME: need to test when there is no match, match at beginning only, and match second char+
     def test_end_index_smaller_than_start_no_match(self):
-        r = Replacer.Replacer('helloi', re.compile('j'), 'bye')
+        r = Replacer.Replacer('helloi', re.compile('j', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(1, 0)
         assert test_result1 == [], (
@@ -196,7 +196,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result8))
 
     def test_end_index_smaller_than_start_match_at_start(self):
-        r = Replacer.Replacer('helloi', re.compile('he'), 'bye')
+        r = Replacer.Replacer('helloi', re.compile('he', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(1, 0)
         assert test_result1 == [], (
@@ -231,7 +231,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result8))
 
     def test_end_index_smaller_than_start_match_at_middle(self):
-        r = Replacer.Replacer('helloi', re.compile('ll'), 'bye')
+        r = Replacer.Replacer('helloi', re.compile('ll', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(1, 0)
         assert test_result1 == [], (
@@ -266,7 +266,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result8))
 
     def test_end_index_too_big_no_match(self):
-        r = Replacer.Replacer('helloi', re.compile('j'), 'bye')
+        r = Replacer.Replacer('helloi', re.compile('j', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(0, 6)
         assert test_result1 == [], (
@@ -281,7 +281,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result3))
 
     def test_end_index_too_big_match_at_start(self):
-        r = Replacer.Replacer('helloi', re.compile('he'), 'bye')
+        r = Replacer.Replacer('helloi', re.compile('he', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(0, 6)
         assert test_result1 == ['he', 'bye', '0'], (
@@ -296,7 +296,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result3))
 
     def test_end_index_too_big_match_at_middle(self):
-        r = Replacer.Replacer('helloi', re.compile('ll'), 'bye')
+        r = Replacer.Replacer('helloi', re.compile('ll', flags=re.MULTILINE), 'bye')
 
         test_result1 = r.replace_once(0, 6)
         assert test_result1 == ['ll', 'bye', '2'], (
@@ -311,7 +311,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result3))
 
     def test_regex_not_exist(self):
-        r = Replacer.Replacer('helloi', re.compile('bye'), 'hi')
+        r = Replacer.Replacer('helloi', re.compile('bye', flags=re.MULTILINE), 'hi')
 
         test_result1 = r.replace_once(0)
         assert test_result1 == [], (
@@ -356,7 +356,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result3))
 
     def test_regex_is_superset_no_match(self):
-        r = Replacer.Replacer('helloi', re.compile('j'), '')
+        r = Replacer.Replacer('helloi', re.compile('j', flags=re.MULTILINE), '')
 
         test_result1 = r.replace_once(0)
         assert test_result1 == [], (
@@ -371,7 +371,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result3))
 
     def test_regex_is_superset_at_start(self):
-        r = Replacer.Replacer('helloi', re.compile('helloworld'), 'hello')
+        r = Replacer.Replacer('helloi', re.compile('helloworld', flags=re.MULTILINE), 'hello')
 
         test_result1 = r.replace_once(0)
         assert test_result1 == [], (
@@ -386,7 +386,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result3))
 
     def test_regex_is_superset_at_middle(self):
-        r = Replacer.Replacer('helloi', re.compile('lloworld'), 'hello')
+        r = Replacer.Replacer('helloi', re.compile('lloworld', flags=re.MULTILINE), 'hello')
 
         test_result1 = r.replace_once(0)
         assert test_result1 == [], (
@@ -401,7 +401,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result3))
 
     def test_replacement_is_empty_no_match(self):
-        r = Replacer.Replacer('helloi', re.compile('j'), '')
+        r = Replacer.Replacer('helloi', re.compile('j', flags=re.MULTILINE), '')
 
         test_result1 = r.replace_once(0)
         assert test_result1 == [], (
@@ -416,7 +416,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result3))
 
     def test_replacement_is_empty_match_at_start(self):
-        r = Replacer.Replacer('helloi', re.compile('hello'), '')
+        r = Replacer.Replacer('helloi', re.compile('hello', flags=re.MULTILINE), '')
 
         test_result1 = r.replace_once(0)
         assert test_result1 == ['hello', '', '0'], (
@@ -431,7 +431,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result3))
 
     def test_replacement_is_empty_match_at_middle(self):
-        r = Replacer.Replacer('helloi', re.compile('ll'), '')
+        r = Replacer.Replacer('helloi', re.compile('ll', flags=re.MULTILINE), '')
 
         test_result1 = r.replace_once(0)
         assert test_result1 == ['ll', '', '2'], (
@@ -446,7 +446,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result3))
 
     def test_replacement_has_back_references_no_match(self):
-        r = Replacer.Replacer('helloi', re.compile('bye'), '\\g<0>')
+        r = Replacer.Replacer('helloi', re.compile('bye', flags=re.MULTILINE), '\\g<0>')
 
         test_result1 = r.replace_once(0)
         assert test_result1 == [], (
@@ -461,7 +461,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result3))
 
     def test_replacement_has_back_references_match_at_start(self):
-        r = Replacer.Replacer('helloi', re.compile('hello'), '\\g<0>')
+        r = Replacer.Replacer('helloi', re.compile('hello', flags=re.MULTILINE), '\\g<0>')
 
         test_result1 = r.replace_once(0)
         assert test_result1 == ['hello', 'hello', '0'], (
@@ -476,7 +476,7 @@ class ReplaceOnceTester(Tester.Tester):
             'Expected: [], got: {}'.format(test_result3))
 
     def test_replacement_has_back_references_match_at_middle(self):
-        r = Replacer.Replacer('helloi', re.compile('lo'), '\\g<0>')
+        r = Replacer.Replacer('helloi', re.compile('lo', flags=re.MULTILINE), '\\g<0>')
 
         test_result1 = r.replace_once(0)
         assert test_result1 == ['lo', 'lo', '3'], (
@@ -489,3 +489,14 @@ class ReplaceOnceTester(Tester.Tester):
         test_result3 = r.replace_once(6)
         assert test_result3 == [], (
             'Expected: [], got: {}'.format(test_result3))
+
+    def test_replacement_in_middle_with_beginning_of_line_regex(self):
+        r = Replacer.Replacer('hello\nworld\nbye', re.compile('^world', flags=re.MULTILINE), 'bye')
+
+        test_result1 = r.replace_once(0)
+        assert test_result1 == ['world', 'bye', '6'], (
+            'Expected: ["world", "bye", "6"], got: {}'.format(test_result1))
+
+        test_result2 = r.replace_once(6)
+        assert test_result2 == ['world', 'bye', '6'], (
+            'Expected: ["world", "bye", "6"], got: {}'.format(test_result2))
