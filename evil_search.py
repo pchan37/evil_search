@@ -1,5 +1,6 @@
-import mypy
+# import mypy
 import re
+import sys
 
 from lib import Replacer
 from lib import Searcher
@@ -24,7 +25,7 @@ def evil_substitute(start, buffer_string, string_to_search, replacement, flags='
     if 'i' in flags:
         re_flags |= re.IGNORECASE
     if 'u' not in flags:
-        replacement_string = evil_turn_off_python_repr_of_unicode_chars(replacement)
+        replacement = evil_turn_off_python_repr_of_unicode_chars(replacement)
     regex = re.compile(string_to_search, flags=re_flags)
     replacer = Replacer.Replacer(buffer_string, regex, replacement)
     replacements_list = []  # type: list
@@ -59,3 +60,14 @@ def evil_parse_input(buffer_string, regex_string, point):
         return evil_substitute(point, buffer_string, *args[1:])
     else:
         return 'Format not supported!'
+
+
+def main():
+    # type: () -> mypy.Any
+    args = sys.argv
+    result = evil_parse_input(args[1], args[2], int(args[3]))
+    return result
+
+
+if __name__ == '__main__':
+    print main()
