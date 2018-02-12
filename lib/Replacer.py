@@ -5,7 +5,6 @@ from utils import utils
 class Replacer(object):
 
     def __init__(self, input_string, regex, replacement):
-        self.input_string = input_string
         self.regex_pattern = regex
         self.replacement = replacement
         self.searcher = Searcher.Searcher(input_string, regex)
@@ -33,12 +32,12 @@ class Replacer(object):
             start_index = match_start + 1
             replacement_list = self.replace_once(start_index, end_index)
 
-        list_of_replacements_no_overlap = []
-        for index, replacements in enumerate(list_of_replacements):
-            if index > 0:
-                if int(replacements[2]) >= int(list_of_replacements[index - 1][2]) + len(list_of_replacements[index - 1][0]):
-                    list_of_replacements_no_overlap.append(replacements)
-            else:
+        list_of_replacements_no_overlap = [list_of_replacements[0]]
+        for index, replacements in enumerate(list_of_replacements[1:]):
+            # Not index - 1 because we start at the second element of list.
+            previous_replacement_list = list_of_replacements[index]
+            previous_match_length = int(previous_replacement_list[2]) + len(previous_replacement_list[0])
+            if int(replacements[2]) >= previous_match_length:
                 list_of_replacements_no_overlap.append(replacements)
 
         return utils.unpack_inner_lists_in_list(list_of_replacements_no_overlap)
