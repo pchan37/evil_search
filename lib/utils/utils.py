@@ -1,2 +1,2 @@
-def unpack_tuple_in_list(given_list):
-    return [tuple_element for list_tuple in given_list for tuple_element in list_tuple]
+def unpack_inner_lists_in_list(given_list):
+    return [element for inner_list in given_list for element in inner_list]

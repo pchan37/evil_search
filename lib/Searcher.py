@@ -30,4 +30,4 @@ class Searcher(object):
                 list_of_searches.append(search_list)
             start_index = match_start + 1
             search_list = self.search_once(start_index, end_index)
-        return utils.unpack_tuple_in_list(list_of_searches)
+        return utils.unpack_inner_lists_in_list(list_of_searches)
