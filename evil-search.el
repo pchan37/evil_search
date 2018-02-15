@@ -1,8 +1,13 @@
 ;;; evil-search.el --- Searching and replacing with vim-like syntax
 
+;; Package-Requires: ((dash "2.13.0"))
+
 ;;; Commentary:
 
 ;;; Code:
+
+(require 'dash)
+
 (defvar evil-search-python-command
   (concat (format "python %s "
                   (expand-file-name "evil_search.py"
@@ -28,17 +33,13 @@
      ((string-match substring-to-search string start-index) start-index)
      (t (get-last-index string substring-to-search (1- start-index))))))
 
-(defun python-string-to-elisp-list (python-list)
-  "Convert PYTHON-LIST into an Elisp list."
-  (let* ((end-index (and (not (string= "" python-list)) (string-match "', '" python-list 1)))
-         (wanted-substring (and end-index (substring python-list 1 end-index))))
-    (cond
-     (end-index (cons (or (and (string-match "\\`[0-9]+\\'" wanted-substring)
-                               (string-to-number wanted-substring))
-                          wanted-substring)
-                      (python-string-to-elisp-list
-                       (substring python-list (+ end-index 3)))))
-     ((not (string= "" python-list)) (list (string-to-number (substring python-list 1 -1)))))))
+(defun python-string-to-elisp-list (python-string)
+  "Convert PYTHON-STRING into an Elisp list."
+  (let ((base64-encoded-list (split-string python-string ", ")))
+    (--map-indexed (or (and (= (mod (1+ it-index) 3) 0)
+                            (string-to-number (base64-decode-string (substring it 1 -1))))
+                       (base64-decode-string (substring it 1 -1)))
+                   base64-encoded-list)))
 
 (defun get-relevant-data-from-python-command-result (command-output)
   "Get search/replace result and regex flags from COMMAND-OUTPUT."
@@ -47,7 +48,7 @@
                                                2
                                                (1- search-replace-result-end-index)))
          (search-replace-result
-          (python-string-to-elisp-list raw-search-replace-result))
+          (new-python-string-to-elisp-list raw-search-replace-result))
          (regex-flags (substring command-output
                                  (+ search-replace-result-end-index 3)
                                  (get-last-index command-output "'"))))
@@ -103,8 +104,6 @@
 
 (defun evil-substitute (replace-result regex-flags)
   "Substitute base on data in REPLACE-RESULT and REGEX-FLAGS modifiers."
-  (message "%s" replace-result)
-  (message "%s" regex-flags)
   (save-excursion
     (let* ((index 0)
            (max-index (length replace-result))
@@ -114,13 +113,14 @@
            (start-search-index)
 
            (query-p (numberp (string-match "c" regex-flags))))
-      (while (<= (+ index 3) max-index)
-        (setq string-to-search (nth index replace-result)
-              replacement-string (nth (1+ index) replace-result)
-              start-search-index (nth (+ index 2) replace-result))
-        (goto-char (1+ start-search-index))
-        (evil-substitute-make-replacement string-to-search replacement-string query-p)
-        (setq index (+ index 3)))
+      (let ((inhibit-redisplay (not query-p)))
+        (while (<= (+ index 3) max-index)
+          (setq string-to-search (nth index replace-result)
+                replacement-string (nth (1+ index) replace-result)
+                start-search-index (nth (+ index 2) replace-result))
+          (goto-char (1+ start-search-index))
+          (evil-substitute-make-replacement string-to-search replacement-string query-p)
+          (setq index (+ index 3))))
       (if query-p
           (message "Done!")
         (message "Success, replaced %s occurrences!" (/ max-index 3)))

@@ -1,4 +1,5 @@
 # import mypy
+import base64
 import re
 import sys
 
@@ -55,9 +56,11 @@ def evil_parse_input(buffer_string, regex_string, point):
     args = evil_split_on_delimiters(regex_string)
     total_args = len(args[1:])
     if args[0] == '' and (total_args == 1 or total_args == 2):
-        return evil_search(point, buffer_string, *args[1:])
+        result = evil_search(point, buffer_string, *args[1:])
+        return (map(lambda x: base64.b64encode(str(x)), result[0]), result[1])
     elif args[0] == 's' and (total_args == 2 or total_args == 3):
-        return evil_substitute(point, buffer_string, *args[1:])
+        result = evil_substitute(point, buffer_string, *args[1:])
+        return (map(lambda x: base64.b64encode(str(x)), result[0]), result[1])
     else:
         return 'Format not supported!'
 
