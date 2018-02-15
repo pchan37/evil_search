@@ -98,9 +98,9 @@
                (user-input (get-user-input prompt-string "[yn]")))
           (cond
            ((char-equal user-input ?y)
-            (perform-replace string-to-search replacement-string nil nil nil 1))
+            (perform-replace string-to-search replacement-string nil nil nil 1 query-replace-map (point) (+ (point) (length string-to-search))))
            ((char-equal user-input ?n) nil))))
-    (perform-replace string-to-search replacement-string nil nil nil 1)))
+    (perform-replace string-to-search replacement-string nil nil nil 1 query-replace-map (point) (+ (point) (length string-to-search)))))
 
 (defun evil-substitute (replace-result regex-flags)
   "Substitute base on data in REPLACE-RESULT and REGEX-FLAGS modifiers."

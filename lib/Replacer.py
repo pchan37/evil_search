@@ -9,6 +9,27 @@ class Replacer(object):
         self.replacement = replacement
         self.searcher = Searcher.Searcher(input_string, regex)
 
+    def get_replacement_attr(self, replacement_list):
+        return len(replacement_list[0]), len(replacement_list[1]), int(replacement_list[2])
+
+    def adjust_for_overlap(self, list_of_replacements):
+        first_elem = list_of_replacements[0]
+        list_of_replacements_no_overlap = [first_elem]
+        search_len, replace_len, start = self.get_replacement_attr(first_elem)
+        previous_match_length = start + search_len
+        offset = search_len - replace_len
+
+        for replacements in list_of_replacements[1:]:
+            if int(replacements[2]) >= previous_match_length:
+                old_replacements = replacements[:]
+                replacements[2] = str(int(replacements[2]) - offset)
+                list_of_replacements_no_overlap.append(replacements)
+
+                search_len, replace_len, start = self.get_replacement_attr(old_replacements)
+                previous_match_length = start + search_len
+                offset += (search_len - replace_len)
+        return list_of_replacements_no_overlap
+
     def replace_once(self, start_index, end_index=float('inf')):
         replacement_list = []
 
@@ -32,12 +53,5 @@ class Replacer(object):
             start_index = match_start + 1
             replacement_list = self.replace_once(start_index, end_index)
 
-        list_of_replacements_no_overlap = [list_of_replacements[0]]
-        for index, replacements in enumerate(list_of_replacements[1:]):
-            # Not index - 1 because we start at the second element of list.
-            previous_replacement_list = list_of_replacements[index]
-            previous_match_length = int(previous_replacement_list[2]) + len(previous_replacement_list[0])
-            if int(replacements[2]) >= previous_match_length:
-                list_of_replacements_no_overlap.append(replacements)
-
+        list_of_replacements_no_overlap = self.adjust_for_overlap(list_of_replacements)
         return utils.unpack_inner_lists_in_list(list_of_replacements_no_overlap)
