@@ -48,7 +48,7 @@
                                                2
                                                (1- search-replace-result-end-index)))
          (search-replace-result
-          (new-python-string-to-elisp-list raw-search-replace-result))
+          (python-string-to-elisp-list raw-search-replace-result))
          (regex-flags (substring command-output
                                  (+ search-replace-result-end-index 3)
                                  (get-last-index command-output "'"))))
