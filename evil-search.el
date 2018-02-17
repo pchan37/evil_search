@@ -33,26 +33,30 @@
      ((string-match substring-to-search string start-index) start-index)
      (t (get-last-index string substring-to-search (1- start-index))))))
 
-(defun python-string-to-elisp-list (python-string)
-  "Convert PYTHON-STRING into an Elisp list."
+(defun python-string-to-elisp-list (python-string index-to-numberify)
+  "Convert PYTHON-STRING into an Elisp list and convert every INDEX-TO-NUMBERIFY index to a number."
   (let ((base64-encoded-list (split-string python-string ", ")))
-    (--map-indexed (or (and (= (mod (1+ it-index) 3) 0)
+    (--map-indexed (or (and (= (mod (1+ it-index) index-to-numberify) 0)
                             (string-to-number (base64-decode-string (substring it 1 -1))))
                        (base64-decode-string (substring it 1 -1)))
                    base64-encoded-list)))
 
-(defun get-relevant-data-from-python-command-result (command-output)
+(defun get-relevant-data-from-python-command-result (command-output index-to-numberify)
   "Get search/replace result and regex flags from COMMAND-OUTPUT."
-  (let* ((search-replace-result-end-index (get-last-index command-output ","))
-         (raw-search-replace-result (substring command-output
-                                               2
-                                               (1- search-replace-result-end-index)))
-         (search-replace-result
-          (python-string-to-elisp-list raw-search-replace-result))
-         (regex-flags (substring command-output
-                                 (+ search-replace-result-end-index 3)
-                                 (get-last-index command-output "'"))))
-    (list search-replace-result regex-flags)))
+  (message "Command Output: %s" command-output)
+  (if (string= command-output "Format not supported!")
+      '("Bad format!" "")
+    (let* ((search-replace-result-end-index (get-last-index command-output ","))
+           (raw-search-replace-result (substring command-output
+                                                 2
+                                                 (1- search-replace-result-end-index)))
+           (search-replace-result
+            (cond ((string= raw-search-replace-result "") '())
+                  (t (python-string-to-elisp-list raw-search-replace-result index-to-numberify))))
+           (regex-flags (substring command-output
+                                   (+ search-replace-result-end-index 3)
+                                   (get-last-index command-output "'"))))
+      (list search-replace-result regex-flags))))
 
 (defun get-user-input (user-input-prompt allowable-chars-regex)
   "Prompt user with USER-INPUT-PROMPT for a char that is matched by ALLOWABLE-CHARS-REGEX."
@@ -131,12 +135,15 @@
   (interactive)
   (let* ((input (or input (read-string "")))
          (py-command-output (evil-search-run-python-command (buffer-string) input (1- (point))))
-         (relevant-data (get-relevant-data-from-python-command-result py-command-output))
+         (index-to-numberify (or (and (string-prefix-p "/" input) 2) 3))
+         (relevant-data
+          (get-relevant-data-from-python-command-result py-command-output index-to-numberify))
          (search-replace-result (car relevant-data))
          (regex-flags (car (cdr relevant-data))))
     (cond
      ((null search-replace-result) (progn (message "Search failure...")
                                           (sit-for 1)))
+     ((string= (format "%s" search-replace-result) "Bad format!") (message "Wrong format!"))
      ((string-prefix-p "/" input) (evil-search search-replace-result regex-flags))
      ((string-prefix-p "s" input) (evil-substitute search-replace-result regex-flags))
      (t (message "Wrong format!")))))

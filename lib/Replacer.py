@@ -13,6 +13,9 @@ class Replacer(object):
         return len(replacement_list[0]), len(replacement_list[1]), int(replacement_list[2])
 
     def adjust_for_overlap(self, list_of_replacements):
+        if not list_of_replacements:
+            return list_of_replacements
+
         first_elem = list_of_replacements[0]
         list_of_replacements_no_overlap = [first_elem]
         search_len, replace_len, start = self.get_replacement_attr(first_elem)
