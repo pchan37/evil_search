@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t -*-
+
 ;;; evil-search.el --- Searching and replacing with vim-like syntax
 
 ;; Package-Requires: ((dash "2.13.0"))
@@ -8,6 +10,7 @@
 
 (require 'dash)
 
+;;;###autoload
 (defvar evil-search-python-command
   (concat (format "python %s "
                   (expand-file-name "evil_search.py"
@@ -15,6 +18,7 @@
           "%s %s %s")
   "Command to execute.")
 
+;;;###autoload
 (defun evil-search-run-python-command (buffer-content regex point-index)
   "Execute `evil-search-python-command' passing it BUFFER-CONTENT, REGEX, and POINT-INDEX."
   (interactive)
@@ -71,6 +75,7 @@
   ;; Add one to account for minimum point being 1
   (goto-char (1+ (nth index search-result))))
 
+;;;###autoload
 (defun evil-search (search-result regex-flags)
   "Search base on data in SEARCH-RESULT and REGEX-FLAGS modifiers."
   (let ((original-point (point))
@@ -92,6 +97,7 @@
                                           (setq user-input ?q)))
             ((char-equal user-input ?q) nil)))))
 
+;;;###autoload
 (defun evil-substitute-make-replacement (string-to-search replacement-string &optional query-p)
   "Replace STRING-TO-SEARCH with REPLACEMENT-STRING, querying user if QUERY-P."
   (if query-p
@@ -106,6 +112,7 @@
            ((char-equal user-input ?n) nil))))
     (perform-replace string-to-search replacement-string nil nil nil 1 query-replace-map (point) (+ (point) (length string-to-search)))))
 
+;;;###autoload
 (defun evil-substitute (replace-result regex-flags)
   "Substitute base on data in REPLACE-RESULT and REGEX-FLAGS modifiers."
   (save-excursion
@@ -130,6 +137,7 @@
         (message "Success, replaced %s occurrences!" (/ max-index 3)))
       (sit-for 1))))
 
+;;;###autoload
 (defun evil-search-and-substitute (&optional input)
   "Perform evil-search or evil-substitute based on user input or optional arg, INPUT."
   (interactive)
